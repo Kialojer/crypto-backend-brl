@@ -18,14 +18,20 @@ app = FastAPI(
     description="API for the LangGraph ReAct Agent (Brazilian Market)",
     version="1.0.0"
 )
+# در فایل server.py بخش Middleware را پیدا کن و این تغییر را بده:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",       
+        "https://*.vercel.app",       
+        "https://arbitraj-api-brl-d0ckhad0awacgcap.brazilsouth-01.azurewebsites.net" 
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 clerk_config = ClerkConfig(jwks_url=os.getenv("CLERK_JWKS_URL"))
 clerk_guard = ClerkHTTPBearer(clerk_config)
