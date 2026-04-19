@@ -19,11 +19,12 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
 app.add_middleware(
     CORSMiddleware,
-   
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=[
+        "http://localhost:3000"
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app", 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -57,8 +58,8 @@ async def chat_endpoint(
         async with AsyncPostgresSaver.from_conn_string(DB_URI) as memory:
                 await memory.setup()
                 
-                agent_graph = builder.compile(checkpointer = memory)
-                async for event in agent_graph.astream_events(initial_state, config=config, version="v2"):
+                compiled_graph = agent_graph.compile(checkpointer=memory)
+                async for event in compiled_graph.astream_events(initial_state, config=config, version="v2"):
                      
                     if event["event"] == "on_chat_model_stream":
                         chunk_text = event["data"]["chunk"].content
