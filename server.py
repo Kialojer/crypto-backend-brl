@@ -58,7 +58,7 @@ async def chat_endpoint(
         async with AsyncPostgresSaver.from_conn_string(DB_URI) as memory:
                 await memory.setup()
                 
-                compiled_graph = agent_graph.compile(checkpointer=memory)
+                compiled_graph = agent_graph
                 async for event in compiled_graph.astream_events(initial_state, config=config, version="v2"):
                      
                     if event["event"] == "on_chat_model_stream":

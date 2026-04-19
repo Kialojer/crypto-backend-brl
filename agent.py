@@ -131,7 +131,7 @@ builder.add_conditional_edges("Agent", route_after_agent)
 builder.add_edge("tools", "Agent")
 builder.add_edge("OutputGuardrail", END)
 
-app = builder.compile()
+app = builder.compile(checkpointer=memory)
 
 
 if __name__ == "__main__":
