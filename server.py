@@ -56,7 +56,7 @@ async def chat_endpoint(
     async def event_stream():
 
        
-         async with AsyncPostgresSaver.from_conn_string(DATABASE_URL) as memory:
+        async with AsyncPostgresSaver.from_conn_string(DATABASE_URL) as memory:
             await memory.setup()
 
             
