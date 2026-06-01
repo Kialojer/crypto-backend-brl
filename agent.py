@@ -13,7 +13,6 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-
 class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
 
@@ -27,7 +26,6 @@ def get_crypto_price_brl(symbol: str) -> str:
     symbol_upper = symbol.upper().strip()
     symbol_lower = symbol.lower().strip()
     results = []
-
     endpoints = [
         {"name": "Mercado Bitcoin", "url": f"https://api.mercadobitcoin.net/api/v4/tickers?symbols={symbol_upper}-BRL", "path": lambda r: float(r[0]['last'])},
         {"name": "Binance", "url": f"https://api.binance.com/api/v3/ticker/price?symbol={symbol_upper}BRL", "path": lambda r: float(r["price"])},
@@ -76,7 +74,7 @@ def Guardrail_node(state: AgentState):
     if "LEGAL: UNSAFE" in check:
         return {"messages": [AIMessage(content="🛡️ Legal: I cannot assist with illegal financial activities.")]}
 
-    print("✅ Input Guardrail Passed.")
+    print("Input Guardrail Passed.")
     return {}
 
 def reasoning_agent_node(state: AgentState):
@@ -85,10 +83,8 @@ def reasoning_agent_node(state: AgentState):
     1. Use get_crypto_price_brl for coin prices.
     2. List all prices and point out the cheapest exchange.
     3. End with the RAW JSON in a ```json block.""")
-    
     messages = [sys_msg] + state["messages"]
-    print("🧠 Agent is thinking... this agent desing with Kiarash T.N")
-
+    print("Agent is thinking... this agent desing with Kiarash T.N")
     return {"messages": [llm_with_tools.invoke(messages)]}
 
 def Output_Guardrail_node(state: AgentState):
@@ -102,10 +98,9 @@ def Output_Guardrail_node(state: AgentState):
     if "SAFE" not in review and len(review) > 10: 
         return {"messages": [AIMessage(content=review)]}
     
-    print("✅ Output Guardrail Passed.")
+    print(" Output Guardrail Passed.")
     return {}
-
-
+    
 def route_after_guardrail(state: AgentState):
     if isinstance(state["messages"][-1], AIMessage):
         return END
@@ -116,7 +111,6 @@ def route_after_agent(state: AgentState):
     if condition == "tools":
         return "tools"
     return "OutputGuardrail"
-
 
 builder = StateGraph(AgentState)
 
@@ -143,5 +137,3 @@ if __name__ == "__main__":
     
     final_state = app.invoke(inputs, config=config)
     print("\n" + "="*50)
-    print("🤖 Final Response:\n", final_state["messages"][-1].content)
-    print("="*50)
